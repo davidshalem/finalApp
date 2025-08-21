@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LoginBaseApp.Views.RegistrationPage"
+             Title="רישום משתמש"
+             FlowDirection="RightToLeft">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10">
+
+            <Label Text="שם משתמש" />
+            <Entry Placeholder="הכנס שם משתמש" Text="{Binding Username}" />
+
+            <Label Text="אימייל" />
+            <Entry Placeholder="example@email.com" Text="{Binding Email}" Keyboard="Email" />
+
+            <Label Text="סיסמה" />
+            <Entry Placeholder="••••••" Text="{Binding Password}" IsPassword="True" />
+
+            <Button Text="הרשמה"
+            Command="{Binding RegisterCommand}"
+            Style="{StaticResource MainButtonStyle}" />
+
+            <Label Text="{Binding Message}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

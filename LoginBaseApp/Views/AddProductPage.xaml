@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LoginBaseApp.Views.AddProductPage"
+             Title="הוספת מוצר">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+            <Label Text="שם מוצר" />
+            <Entry Text="{Binding Name}" Placeholder="למשל: קפה גדול" />
+
+            <Label Text="מחיר" />
+            <Entry Text="{Binding Price}" Keyboard="Numeric" Placeholder="0.00" />
+
+            <HorizontalStackLayout Spacing="12">
+                <Button Text="שמירה" Command="{Binding SaveCommand}" />
+                <Button Text="ביטול" Command="{Binding CancelCommand}" />
+            </HorizontalStackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LoginBaseApp.Views.ProductsPage"
+             x:Name="PageRoot"
+             Title="מוצרים">
+
+    <ContentPage.ToolbarItems>
+        <!-- אופציונלי: הוספה (אם תרצה להשתמש בדף עריכה גם להוספה) -->
+        <!-- <ToolbarItem Text="הוסף" Command="{Binding AddCommand}" /> -->
+        <ToolbarItem Text="רענן" Command="{Binding LoadCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,*" Padding="16">
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+        <CollectionView Grid.Row="1"
+                    ItemsSource="{Binding Products}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems Mode="Reveal">
+                                <!-- עריכה: מעבירים את כל האובייקט Product -->
+                                <SwipeItem Text="עריכה"
+                                   Command="{Binding BindingContext.EditCommand, Source={x:Reference PageRoot}}"
+                                   CommandParameter="{Binding .}" />
+
+                                <!-- מחיקה: מעבירים את כל האובייקט Product (פתרון A) -->
+                                <SwipeItem Text="מחיקה"
+                           BackgroundColor="Tomato"
+                           Command="{Binding BindingContext.DeleteCommand, Source={x:Reference PageRoot}}"
+                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
+                        <Grid Padding="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <VerticalStackLayout>
+                                <Label Text="{Binding Name}"
+                       FontAttributes="Bold"
+                       FontSize="18" />
+                                <Label Text="{Binding Price, StringFormat='₪{0:F2}'}" />
+                            </VerticalStackLayout>
+
+                            <Image Grid.Column="1"
+                     Source="chevron_left.png"
+                     WidthRequest="20"
+                     HeightRequest="20"
+                     VerticalOptions="Center" />
+                        </Grid>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

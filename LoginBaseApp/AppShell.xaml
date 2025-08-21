@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:LoginBaseApp.Views"
+    x:Class="LoginBaseApp.AppShell"
+    FlowDirection="RightToLeft">
+
+
+    <Shell.CurrentItem>
+        <ShellContent Route="register" ContentTemplate="{DataTemplate views:LoginPage}" />
+    </Shell.CurrentItem>
+
+    <FlyoutItem Title="רישום" Route="register">
+        <ShellContent ContentTemplate="{DataTemplate views:RegistrationPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="כניסה" Route="profile">
+        <ShellContent ContentTemplate="{DataTemplate views:LoginPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="פרופיל" Route="profile">
+        <ShellContent ContentTemplate="{DataTemplate views:ProfilePage}" />
+    </FlyoutItem>
+
+
+
+</Shell>
