@@ -1,95 +1,121 @@
+פרויקט MAUI – הזדהות וניהול מוצרים (MVVM + Shell)
+
+אפליקציית .NET MAUI המדגימה הרשמה/התחברות, דף פרופיל, וניהול מוצרים עם פעולות עריכה ו־מחיקה.
+הפרויקט בנוי בתבנית MVVM, משתמש ב־Shell לניווט, ב־Dependency Injection להזרקת שירותים ו־ViewModels, וב־SQLite לשמירת נתונים מקומית.
+
+הערה: בגרסה זו קיימות טבלאות Users ו־Products בלבד. בהמשך ניתן להוסיף גם טבלת Orders.
+
+תכונות מרכזיות
+
+🔐 הרשמה והתחברות (סיסמאות מאוחסנות כ־SHA-256 Hash).
+
+👤 דף פרופיל עם ניהול תמונת פרופיל (אופציונלי – MediaPicker).
+
+📦 מוצרים: תצוגת רשימה (CollectionView) ופעולות עריכה/מחיקה ב־Swipe.
+
+🧠 ארכיטקטורה: MVVM מלא + Shell + DI.
+
+🗄️ מסד נתונים מקומי: SQLite (app.db3) דרך Repository Pattern.
+
+⚙️ Async/await מקצה לקצה – ללא חסימות UI.
+
+🎨 Styles בסיסיים בעיצוב (ניתן להרחבה).
+
+מבנה הפרויקט
+.
+├── App.xaml(.cs)
+├── AppShell.xaml(.cs)
+├── MauiProgram.cs
+├── Models/
+│   ├── User.cs
+│   └── Product.cs
+├── Service/
+│   ├── Database.cs
+│   ├── SqlUserRepository.cs
+│   ├── SqlProductRepository.cs
+│   ├── ILoginService.cs
+│   ├── IRegisterService.cs
+│   ├── SqlLoginService.cs
+│   ├── SqlRegisterService.cs
+│   ├── IUserSession.cs
+│   ├── UserSession.cs
+│   ├── ServiceHelper.cs
+│   └── DIPageRouteFactory.cs
+├── ViewModels/
+│   ├── ViewModelBase.cs
+│   ├── LoginPageViewModel.cs
+│   ├── RegistrationPageViewModel.cs
+│   ├── ProfileViewModel.cs
+│   ├── ProductsPageViewModel.cs
+│   └── ProductEditViewModel.cs
+├── Views/
+│   ├── LoginPage.xaml(.cs)
+│   ├── RegistrationPage.xaml(.cs)
+│   ├── ProfilePage.xaml(.cs)
+│   ├── ProductsPage.xaml(.cs)
+│   └── ProductEditPage.xaml(.cs)
+└── Resources/
+    └── Styles/Styles.xaml
+
+דרישות מוקדמות
+
+Visual Studio 2022 (מומלץ 17.8+) עם .NET SDK 8.0 ו־MAUI workload מותקנים.
+
+Android SDK/iOS tooling לפי הצורך.
+
+Windows: תמיכה ב־WinUI 3 (ב־Windows 10/11).
+
+בדיקה מהירה:
+
+dotnet --list-sdks
+dotnet workload list
 
 
-### **תיקיית `MODELS`**
+התקנה:
 
-#### `User.cs`
-מחלקה זו מגדירה את מודל המשתמש באפליקציה. היא מכילה את המידע הבסיסי הנדרש לזיהוי ואימות משתמש.
+dotnet workload install maui
 
-*   **תכונות (Properties):**
-    *   `Username` (string): מייצג את שם המשתמש.
-    *   `Password` (string): מייצג את סיסמת המשתמש.
+התקנה והרצה
+# שכפול המאגר
+git clone <repo-url>
+cd <repo-folder>
 
----
+# שחזור חבילות
+dotnet restore
 
-### **תיקיית `SERVICE`**
+# הרצה מתוך Visual Studio (מומלץ) או מקונסולה
+dotnet build
 
-בתיקייה זו נמצאים השירותים (Services) שמטפלים בלוגיקה העסקית, כמו אימות משתמש מול מקור נתונים.
 
-#### `ILoginService.cs`
-ממשק (Interface) זה מגדיר את החוזה שכל שירות התחברות (Login Service) חייב לממש. שימוש בממשק מאפשר גמישות והחלפה קלה בין מימושים שונים של שירות ההתחברות (למשל, בין מסד נתונים מדמה לבין קריאת API אמיתית).
+קובץ ה־DB (app.db3) נוצר אוטומטית ב־AppDataDirectory.
 
-*   **פעולות (Methods):**
-    *   `Login(string username, string password)`: פעולה המקבלת שם משתמש וסיסמה, ומחזירה `true` אם האימות הצליח, ו-`false` אם נכשל.
+זרימת שימוש לדוגמה
 
-#### `DBMokup.cs`
-מחלקה זו היא מימוש של הממשק `ILoginService`. היא מדמה מסד נתונים על ידי שימוש ברשימה של משתמשים קבועים מראש (Hardcoded) לצורך בדיקה ופיתוח.
+הרשמה של משתמש חדש → התחברות.
 
-*   **שדות (Fields):**
-    *   `users`: רשימה (`List`) של אובייקטים מסוג `User` המכילה את המשתמשים המורשים.
-*   **בנאי (Constructor):**
-    *   `DBMokup()`: מאתחל את רשימת המשתמשים עם שלושה משתמשים לדוגמה.
-*   **פעולות (Methods):**
-    *   `Login(string username, string password)`: בודקת אם שם המשתמש והסיסמה שהתקבלו תואמים לאחד המשתמשים ברשימה. מחזירה `true` אם נמצא משתמש תואם, אחרת `false`.
+פרופיל – בדיקה שהמשתמש מחובר.
 
-#### `ApiService.cs`
-מחלקה זו היא מימוש נוסף של `ILoginService`. מטרתה היא לדמות התחברות דרך קריאה לשירות רשת חיצוני (API). כרגע, המימוש הוא מימוש דמה (Placeholder).
+מוצרים – צפייה ברשימה, החלקה שמאלה על פריט → עריכה/מחיקה.
 
-*   **בנאי (Constructor):**
-    *   `ApiService()`: בנאי ריק. בעתיד ניתן יהיה לאתחל כאן הגדרות שקשורות ל-API.
-*   **פעולות (Methods):**
-    *   `Login(string username, string password)`: כרגע, הפעולה תמיד מחזירה `true` באופן קבוע. בגרסה אמיתית, היא הייתה מבצעת קריאת רשת לשרת לאימות המשתמש.
+(אופציונלי) הוספה – שימוש באותו מסך עריכה כאשר אין ProductId.
 
----
+בעיות נפוצות ופתרונות
 
-### **תיקיית `VIEWMODELS`**
+MissingMethodException (אין בנאי ריק לעמוד)
+יש להשתמש ב־DIPageRouteFactory<TPage> ורישום ServiceHelper.Services = app.Services; אחרי builder.Build().
 
-ה-ViewModel מקשר בין הלוגיקה של האפליקציה (Service/Model) לבין התצוגה (View). הוא חושף נתונים ופקודות שהתצוגה יכולה להיקשר אליהן.
+InvalidCastException בהעברת פרמטרים
+השתמשו ב־IQueryAttributable ובדקו פרמטרים כ־int/string (לא int? ב־pattern).
 
-#### `ViewModelBase.cs`
-מחלקה בסיס שממנה יורשים כל שאר ה-ViewModels. היא מממשת את הממשק `INotifyPropertyChanged`, המאפשר לעדכן את ממשק המשתמש (UI) באופן אוטומטי כאשר ערך של תכונה משתנה.
+Deadlock / UI קפוא
+כל פעולות ה־DB אסינכרוניות (async/await), אל תשתמשו ב־.Result/.Wait().
 
-*   **תכונות (Properties):**
-    *   `IsBusy` (bool): תכונה המציינת אם האפליקציה מבצעת פעולה ארוכה (כמו קריאת רשת). בדרך כלל משמשת להצגת מחוון טעינה (Loading Indicator) ב-UI.
-*   **אירועים (Events):**
-    *   `PropertyChanged`: אירוע המופעל כאשר ערך של תכונה משתנה.
-*   **פעולות (Methods):**
-    *   `OnPropertyChanged(string propertyName)`: פעולה המפעילה את האירוע `PropertyChanged` כדי לעדכן את ה-UI.
+מפת דרכים (Roadmap)
 
-#### `LoginPageViewModel.cs`
-ה-ViewModel של דף ההתחברות. הוא מנהל את המצב והלוגיקה של הדף.
+הוספת מסך Orders (בחירת מוצרים מתוך הרשימה וכמות).
 
-*   **תכונות (Properties):**
-    *   `UserName` (string): קושר (binds) לשדה הקלט של שם המשתמש ב-UI.
-    *   `Password` (string): קושר לשדה הקלט של הסיסמה ב-UI.
-    *   `MessageIsVisible` (bool): קובעת האם להציג את הודעת המשוב למשתמש (למשל, "התחברת בהצלחה").
-    *   `MessageColor` (Color): קובעת את צבע הודעת המשוב (ירוק להצלחה, אדום לשגיאה).
-    *   `IsPassword` (bool): קובעת האם שדה הסיסמה יוצג כטקסט מוסתר (כוכביות) או גלוי.
-    *   `ShowPasswordIcon` (string): קובעת איזה אייקון (עין פקוחה/סגורה) יוצג לכפתור הצגת/הסתרת הסיסמה.
-    *   `LoginMessage` (string): הטקסט של הודעת המשוב שתוצג למשתמש.
-*   **פקודות (Commands):**
-    *   `LoginCommand` (ICommand): הפקודה המופעלת כאשר המשתמש לוחץ על כפתור ההתחברות. היא מפעילה את הפעולה `Login`.
-    *   `ShowPasswordCommand` (ICommand): הפקודה המופעלת כאשר המשתמש לוחץ על האייקון להצגת/הסתרת הסיסמה. היא מפעילה את הפעולה `TogglePasswordVisiblity`.
-*   **פעולות (Methods):**
-    *   `CanLogin()`: בודקת האם ניתן להפעיל את פקודת ההתחברות. מחזירה `true` רק אם שדות שם המשתמש והסיסמה אינם ריקים. זה מאפשר להפוך את כפתור ההתחברות ללא פעיל (disabled) עד שהמשתמש ימלא את הפרטים.
-    *   `TogglePasswordVisiblity()`: משנה את מצב התצוגה של הסיסמה (מוסתר/גלוי) ואת האייקון המתאים.
-    *   `Login()`: הפעולה המרכזית. היא קוראת לפעולת ה-`Login` של ה-`ILoginService`, ומעדכנת את תכונות ה-ViewModel (`LoginMessage`, `MessageColor`, `MessageIsVisible`) בהתאם לתשובה שחזרה מהשירות.
+שיפורי UX ו־Validation.
 
----
+בדיקות יחידה ל־Repositories.
 
-### קבצים נוספים (`Helper`)
-
-אלו קבצי עזר המכילים ערכים קבועים לשימוש ברחבי האפליקציה.
-
-#### `AppMessages.cs`
-מחלקה סטטית המרכזת הודעות טקסט קבועות שמוצגות למשתמש.
-
-*   **קבועים (Constants):**
-    *   `LoginMessage`: הודעת הצלחה לאחר התחברות ("התחברת").
-    *   `LoginErrorMessage`: הודעת שגיאה במקרה של פרטים לא נכונים ("שם משתמש וסיסמה לא תקינים").
-
-#### `FontHelper.cs`
-מחלקה סטטית המרכזת קודים של אייקונים מפונט אייקונים.
-
-*   **קבועים (Constants):**
-    *   `OPEN_EYE_ICON`: קוד היוניקוד לאייקון של עין פקוחה.
-    *   `CLOSED_EYE_ICON`: קוד היוניקוד לאייקון של עין סגורה.
+הרחבת Styles ו־Theming.
